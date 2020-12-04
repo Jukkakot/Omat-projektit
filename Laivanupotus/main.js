@@ -1,92 +1,51 @@
-const boxSize = 40
+var BOXSIZE = 40
 var grid1
 var grid2
-const states = ["", "o", "x", "l", "xl"]
+const states = ["", "o", "x", "s", "xs"]
+const directions = [0, 1, -1]
 var mX, mY
 var shipArr = []
+var shipsToAddP = [2,3,3,4,5]
+var shipsToAddR = [...shipsToAddP]
+var infiniteLoop = false
 function setup() {
-  createCanvas(880, 500)
+  createCanvas(BOXSIZE * 22, BOXSIZE * 17)
   //background(220);
-  grid1 = new Grid(0, 0, boxSize)
-  grid2 = new Grid(12, 0, boxSize)
-  grid2.randomShips(0.1)
+
+  grid1 = new Grid(0, 0, BOXSIZE)
+  grid2 = new Grid(12, 0, BOXSIZE)
+  grid2.addRandomShips(shipsToAddR)
+  //grid2.randomShips(0.1)
+
 }
 function mouseClicked(e) {
   if (wasInGrid2()) {
-    if (!grid1.gameOver() && !grid2.gameOver() && grid2.click()) {
+    if (shipsToAddP.length === 0 && !grid1.gameOver() && !grid2.gameOver() && grid2.click()) {
       grid1.clickRandom()
     }
   }
 }
-function mouseDragged() {
-  if (wasInGrid1()) {
-    const block = grid1.getBlock(mX, mY)
-    if(block.state === states[3]) {
-      return
-    }
-    if (shipArr.length === 0) {
-      shipArr.push(block)
-      block.state = states[3]
-    } else if (!shipArr.includes(block) && shipArr[shipArr.length - 1].neighbours.includes(block)) {
-      shipArr.push(block)
-      block.state = states[3]
-    }
-  }
-}
-function isValidShip() {
-  if(shipArr.length <= 1){
-    return false
-  }
-  if(!(sameX(shipArr[0].x) || sameY(shipArr[0].y))){
-    return false
-  }
-  for(var b of shipArr){
-    for(var n of b.neighbours){
-      if(!shipArr.includes(n) && n.state === states[3]){
-        return false
-      }
-    }
-  }
-  return true
-}
-function sameY(y) {
-  for (var block of shipArr) {
-    if (block.y != y) {
-      return false
-    }
-  }
-  return true
-}
-function sameX(x) {
-  for (var block of shipArr) {
-    if (block.x != x) {
-      return false
-    }
-  }
-  return true
-}
-function mouseReleased() {
-  if (!isValidShip()) {
-    for (var block of shipArr) {
-      block.state = states[0]
-    }
-  } 
-  shipArr = []
-}
-function wasInGrid1() {
-  return mX >= 0 && mX <= 9 && mY >= 0 && mY <= 9
-}
-function wasInGrid2() {
-  return mX >= 12 && mX <= 21 && mY >= 0 && mY <= 9
-}
 
 function draw() {
   background(240);
+  if (infiniteLoop) {
+    fill(255, 0, 0)
+    noStroke()
+    textSize(BOXSIZE * 2);
+    textAlign(CENTER, CENTER);
+    text('Infinite loop', width / 2, height * 0.8);
+    noFill()
+  }
   noFill()
-  mX = Math.floor(mouseX / boxSize)
-  mY = Math.floor(mouseY / boxSize)
- 
-  grid1.draw()
+  mX = Math.floor(mouseX / BOXSIZE)
+  mY = Math.floor(mouseY / BOXSIZE)
+  fill(0)
+  noStroke()
+  textSize(BOXSIZE * 2);
+  textAlign(CENTER, CENTER);
+  text(mX + "," + mY, width / 2, height - BOXSIZE);
+  noFill()
+  grid1.draw(true)
   grid2.draw()
   if (wasInGrid1()) {
     grid1.hover()
@@ -94,13 +53,21 @@ function draw() {
   if (wasInGrid2()) {
     grid2.hover()
   }
-  if(grid1.gameOver() || grid2.gameOver()){
+  if (grid1.gameOver() || grid2.gameOver()) {
     fill(0)
     noStroke()
-    textSize(80);
+    textSize(BOXSIZE * 2);
     textAlign(CENTER, CENTER);
-    text('Game over!', width/2, height/4);
+    text('Game over!', width / 2, height / 4);
     noFill()
     noLoop();
   }
+  for (var i = Math.min(...shipsToAddP); i < Math.max(...shipsToAddP) + 1; i++) {
+    drawShip(BOXSIZE, BOXSIZE * 8.5 + i * (BOXSIZE + 10), i, [...shipsToAddP])
+  }
+  for (var i = Math.min(...shipsToAddR); i < Math.max(...shipsToAddR) + 1; i++) {
+    drawShip(BOXSIZE * 12, BOXSIZE * 8.5 + i * (BOXSIZE + 10), i, [...shipsToAddR])
+  }
+
 }
+

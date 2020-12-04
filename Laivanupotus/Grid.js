@@ -24,10 +24,10 @@ class Grid {
         }
       }
     }
-    this.draw = () => {
+    this.draw = (drawShips) => {
       for (var row of this.blocks) {
         for (var block of row) {
-          block.draw()
+          block.draw(drawShips)
         }
       }
     }
@@ -38,14 +38,66 @@ class Grid {
       return this.blocks[y][x]
     }
     this.gameOver = () => {
-      return hasState(states[4],this.blocks) && !hasState(states[3],this.blocks)
+      return hasState(states[4], this.blocks) && !hasState(states[3], this.blocks)
+    }
+    this.addRandomShips = (shipsToAdd) => {
+      for (var size of shipsToAdd) {
+        for (var block of buildRandomShip(size, this.blocks)) {
+          block.state = states[3]
+        }
+      }
+      shipsToAdd.splice(0)
     }
   }
 }
-function hasState(state,blocks) {
-  for (var row of blocks){
-    if(row.find(b => b.state === state)) {
-        return true
+
+function buildRandomShip(size, blocks) {
+  var loopCounter = 0
+  var ship = []
+  while (ship.length != size || !isValidShip(ship)) {
+    var prevBlock
+    if (ship.length === 0) {
+      while (ship.length === 0) {
+        var rX = Math.floor(random(0, 10))
+        var rY = Math.floor(random(0, 10))
+        prevBlock = blocks[rY][rX]
+        if (prevBlock.state === states[0]) {
+          ship.push(prevBlock)
+        }
+      }
+    } else {
+      prevBlock = ship[ship.length - 1]
+    }
+    var addedBlock = false
+    for (var n of prevBlock.neighbours) {
+      if (n.state !== states[0]) {
+        continue
+      }
+      const copyShip = [...ship]
+      copyShip.push(n)
+      if (!isDiagNeighbour(prevBlock, n) && isValidShip(copyShip)) {
+        if(ship.push(n) > size){
+          ship=[]
+        }
+        addedBlock = true
+        // break;
+      }
+    }
+    if(loopCounter++ > 1000){
+      infiniteLoop = true
+      return ship
+    }
+    if (!addedBlock) {
+      ship = []
+    }
+  }
+  return ship
+}
+
+function hasState(state, blocks) {
+  for (var row of blocks) {
+    if (row.find(b => b.state === state)) {
+      return true
     }
   }
   return false
@@ -69,10 +121,10 @@ function createBlocks(x, y) {
 
 function giveNeighbours(x, y, blocks) {
   var neighbours = []
-  if(x > 9){
-    x = x -12
+  if (x > 9) {
+    x = x - 12
   }
- //console.log(x,y)
+  //console.log(x,y)
   //VasenYlä
   if (y - 1 >= 0 && x - 1 >= 0) {
     neighbours.push(blocks[y - 1][x - 1])
@@ -109,4 +161,10 @@ function giveNeighbours(x, y, blocks) {
 }
 
 
+function wasInGrid1() {
+  return mX >= 0 && mX <= 9 && mY >= 0 && mY <= 9
+}
+function wasInGrid2() {
+  return mX >= 12 && mX <= 21 && mY >= 0 && mY <= 9
+}
 
