@@ -8,10 +8,10 @@ function isValidShip(ship) {
   if (!(isAllSameX(ship) || isAllSameY(ship))) {
     return false
   }
-  if(new Set(ship).size !== ship.length){
+  if (new Set(ship).size !== ship.length) {
     return false
   }
-  
+
   for (var b of ship) {
     for (var n of b.neighbours) {
       if (!ship.includes(n) && n.state === states[3]) {
@@ -24,7 +24,7 @@ function isValidShip(ship) {
 function isAllSameY(ship) {
   const y = ship[0].y
   for (var block of ship) {
-    if (block.y != y) {
+    if (block.y !== y) {
       return false
     }
   }
@@ -33,7 +33,7 @@ function isAllSameY(ship) {
 function isAllSameX(ship) {
   const x = ship[0].x
   for (var block of ship) {
-    if (block.x != x) {
+    if (block.x !== x) {
       return false
     }
   }
@@ -56,7 +56,7 @@ function mouseDragged() {
   }
 }
 function mouseReleased() {
-  if (!isValidShip(shipArr) && !shipsToAddP.includes(shipArr.length)) {
+  if (!isValidShip(shipArr) || !shipsToAddP.includes(shipArr.length)) {
     for (var block of shipArr) {
       block.state = states[0]
     }
@@ -84,17 +84,17 @@ function drawShip(x, y, size, ships) {
   // text(`x ` + count, x + boxSize * size + boxSize, y + boxSize / 2 + boxSize / 5);
 }
 function isDiagNeighbour(b1, b2) {
-    if(!b1.neighbours.includes(b2)){
-      return false
-    } 
-    if(isAllSameX([b1,b2])){
-      return false
-    }
-    if(isAllSameY([b1,b2])){
-      return false
-    }
-    return true
-}
-function isSameBlock(b1,b2) {
-  return b1.x === b2.x && b1.y === b2.y
+  if (!b1.neighbours.includes(b2)) {
+    return false
+  }
+  if (!b2.neighbours.includes(b1)) {
+    return false
+  }
+  if (isAllSameX([b1, b2])) {
+    return false
+  }
+  if (isAllSameY([b1, b2])) {
+    return false
+  }
+  return true
 }
