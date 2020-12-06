@@ -11,14 +11,14 @@ class Grid {
       }
     }
     this.click = () => {
-      return this.blocks[mY][mX % 12].click()
+      return this.getBlock(mX, mY).click()
     }
-    this.fireRandom = () => {
+    this.clickRandom = () => {
       while (true) {
         const rX = Math.floor(random(0, 10))
         const rY = Math.floor(random(0, 10))
-        var rBlock = this.blocks[rY][rX]
-        if (rBlock.state === states[0] || rBlock.state === states[3]) {
+        var rBlock = this.getBlock(rX, rY)
+        if (rBlock.isState(0) || rBlock.isState(3)) {
           rBlock.click()
           break
         }
@@ -32,10 +32,16 @@ class Grid {
       }
     }
     this.hover = () => {
-      this.blocks[mY][mX % 12].hover()
+      this.getBlock(mX, mY).hover()
     }
     this.getBlock = (x, y) => {
-      return this.blocks[y][x % 12]
+      x = x % 12
+      if (x >= 0 && x <= 9 && y >= 0 && y <= 9) {
+        return this.blocks[y][x]
+      } else {
+        return false
+      }
+
     }
     this.hasWon = () => {
       return hasState(states[4], this.blocks) && !hasState(states[3], this.blocks)
@@ -49,65 +55,74 @@ class Grid {
       shipsToAdd.splice(0)
     }
     this.clickSmart = (args) => {
-      const isTargetMode = args[0]
-      const prevBlock = args[1]
+      if (args === undefined) return [false, giveRandBlock(this.blocks), [giveRandBlock(this.blocks)]]
 
-      // if (prevBlock === undefined || prevBlock.state === states[1] || prevBlock.state === states[4]) {
-      //   console.log("Uh oh, somethings broken...\n",args, this.blocks)
-      // }
-      prevBlock.click()
-      if (prevBlock.state === states[4]) {
-        //Hit ship
-        for (var nei of prevBlock.neighbours) {
-          if (!isDiagNeighbour(nei, prevBlock) && (nei.state === states[0] || nei.state === states[3])) {
-            return [true, nei]
-          }
-        }
-        //prevBlock has no empty neighbour blocks
+      const isTargetMode = args[0]
+      const currBlock = args[1]
+      const prevBlocks = args[2]
+
+      if (currBlock === undefined || currBlock.isState(1) || currBlock.isState(4)) {
+        console.log("Uh oh, somethings broken...\n", args)
       }
-      //prevBlock state is "miss"
-      //or "hit ship" but has no available neighbour blocks
-      if (isTargetMode) {
-        //find block with hit ship
-        var xDif
-        var yDif
-        //Check which direction was last hit ship
-        for (var n of prevBlock.neighbours) {
-          if (n.state === states[4]) {
-            //found "hit ship"
-            xDif = n.x - prevBlock.x
-            yDif = n.y - prevBlock.y
-            break
+
+      currBlock.click()
+
+      // if(isTargetMode && prevBlock.isState(1) ) debugger
+      if (currBlock.isState(4)) {
+        for (var nei of currBlock.neighbours) {
+          if (nei.isState(0) || nei.isState(3)) {
+            prevBlocks.push(currBlock)
+            return [true, nei, prevBlocks]
           }
         }
-        const nextX = prevBlock.x + xDif
-        const nextY = prevBlock.y + yDif
-        var nextBlock
-        if (nextX >= 0 && nextX <= 9 && nextY >= 0 && nextY <= 9) {
-          nextBlock = this.getBlock(prevBlock.x % 12 + xDif, prevBlock.y + yDif)
-        }
-        var loopCount = 0
-        while (loopCount++ < 200) {
-          if (!nextBlock) {
-            break
-          }
-          if (nextBlock.state === states[4]) {
-            //Was xs (hit ship)
-            const nextX = nextBlock.x + xDif
-            const nextY = nextBlock.y + yDif
-            if (nextX >= 0 && nextX <= 9 && nextY >= 0 && nextY <= 9) {
-              //nextBlock = this.getBlock(nextBlock.x % 12 + xDif, nextBlock.y + yDif)
-              nextBlock = this.blocks[nextBlock.y + yDif][nextBlock.x + xDif % 12]
+      }
+      if (isTargetMode || getLastElement(prevBlocks).isState(4)) {
+        for (var block of prevBlocks) {
+          if (!block.isState(4)) continue
+          for (var nei of block.neighbours) {
+            if (nei.isState(0) || nei.isState(3)) {
+              prevBlocks.push(currBlock)
+              return [true, nei, prevBlocks]
             }
           }
-          if (nextBlock.state === states[0] || nextBlock.state === states[3]) {
-            //Was empty or a ship 
-            return [true, nextBlock]
-          }
         }
-        //Hit and sink
+
       }
-      return [false, giveRandBlock(this.blocks)]
+      //prevBlocks.isState(4) || 
+      if ((isTargetMode && currBlock.isState(1))) {
+        //find block with hit ship and "tunnel" to the other side of that
+        var block = currBlock
+        if (getLastElement(prevBlocks).isState(4)) {
+          block = getLastElement(prevBlocks)
+        }
+        var nextBlock = neighbourHasState(block, states[4])
+        var coords = getDirection(block, nextBlock)
+        if (!coords) {
+          prevBlocks.push(currBlock)
+          return [false, giveRandBlock(this.blocks), prevBlocks]
+        }
+        var xDif = coords[0]
+        var yDif = coords[1]
+        while (true) {
+          if (nextBlock.isState(4)) {
+            //Was xs (hit ship)
+            //-> continue "tunneling"
+            var nextX = nextBlock.x + xDif
+            var nextY = nextBlock.y + yDif
+            nextBlock = this.getBlock(nextX, nextY)
+          }
+          //Hit and sink
+          if (!nextBlock || nextBlock.isState(1)) break
+          if (nextBlock.isState(0) || nextBlock.isState(3)) {
+            prevBlocks.push(currBlock)
+            //Was empty or a ship 
+            return [true, nextBlock, prevBlocks]
+          }
+
+        }
+      }
+      prevBlocks.push(currBlock)
+      return [false, giveRandBlock(this.blocks), prevBlocks]
     }
   }
 }
@@ -116,14 +131,17 @@ function giveRandBlock(blocks) {
   while (loopCount++ < 100) {
     var rX = Math.floor(random(0, 10))
     var rY = Math.floor(random(0, 10))
+    if (!isEven(rX) && !isEven(rY)) continue
+    if (isEven(rX) && isEven(rY)) continue
+    if (rX === rY) continue
     const block = blocks[rY][rX]
-    if (block !== undefined && (block.state === states[0] || block.state === states[3])) {
+    if (block !== undefined && (block.isState(0) || block.isState(3))) {
       return block
     }
   }
   for (var row of blocks) {
     for (var block of row) {
-      if (block.state === states[0] || block.state === states[3]) {
+      if (block.isState(0) || block.isState(3)) {
         return block
       }
     }
@@ -139,7 +157,7 @@ function buildRandomShip(size, blocks) {
         var rX = Math.floor(random(0, 10))
         var rY = Math.floor(random(0, 10))
         prevBlock = blocks[rY][rX]
-        if (prevBlock.state === states[0]) {
+        if (prevBlock.isState(0)) {
           ship.push(prevBlock)
         }
       }
@@ -148,7 +166,7 @@ function buildRandomShip(size, blocks) {
     }
     var addedBlock = false
     for (var n of prevBlock.neighbours) {
-      if (n.state !== states[0]) {
+      if (!n.isState(0)) {
         continue
       }
       const copyShip = [...ship]
@@ -232,7 +250,8 @@ function giveNeighbours(x, y, blocks) {
   if (y + 1 <= 9 && x + 1 <= 9) {
     neighbours.push(blocks[y + 1][x + 1])
   }
-  return neighbours
+
+  return shuffle(neighbours)
 }
 
 
@@ -241,5 +260,36 @@ function wasInGrid1() {
 }
 function wasInGrid2() {
   return mX >= 12 && mX <= 21 && mY >= 0 && mY <= 9
+}
+
+function shuffle(a) {
+  var j, x, i;
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    x = a[i];
+    a[i] = a[j];
+    a[j] = x;
+  }
+  return a;
+}
+
+function neighbourHasState(block, state) {
+  for (var n of block.neighbours) {
+    if (n.state === state) return n
+  }
+  return false
+}
+function getDirection(b1, b2) {
+  if (!b1 || !b2) return false
+  const xDif = b1.x - b2.x
+  const yDif = b1.y - b2.y
+  return [xDif, yDif]
+}
+function getLastElement(arr) {
+  if (arr.length === 0) return
+  return arr[arr.length - 1]
+}
+function isEven(num) {
+  return num % 2 == 0
 }
 

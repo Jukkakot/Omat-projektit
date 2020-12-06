@@ -14,7 +14,7 @@ function isValidShip(ship) {
 
   for (var b of ship) {
     for (var n of b.neighbours) {
-      if (!ship.includes(n) && n.state === states[3]) {
+      if (!ship.includes(n) && n.isState(3)) {
         return false
       }
     }
@@ -43,7 +43,7 @@ function isAllSameX(ship) {
 function mouseDragged() {
   if (wasInGrid1() && shipsToAddP.length > 0) {
     const block = grid1.getBlock(mX, mY)
-    if (block.state === states[3]) {
+    if (block.isState(3)) {
       return
     }
     if (shipArr.length === 0) {

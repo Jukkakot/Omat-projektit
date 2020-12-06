@@ -8,13 +8,13 @@ class Block {
             const state = this.state
             const x = this.x * BOXSIZE
             const y = this.y * BOXSIZE
-            if (state === states[1]) {
+            if (this.isState(1)) {
                 drawO(x, y)
-            } else if (state === states[2]) {
+            } else if (this.isState(2)) {
                 drawX(x, y)
-            } else if (state === states[3] && drawShips) {
+            } else if (this.isState(3) && drawShips) {
                 drawS(x, y)
-            } else if (state === states[4]) {
+            } else if (this.isState(4)) {
                 drawS(x, y)
                 drawX(x, y)
                 return
@@ -23,16 +23,16 @@ class Block {
         }
         this.click = () => {
             //Miss
-            if (this.state === states[0]) {
+            if (this.isState(0)) {
                 this.state = states[1]
                 return true
             }
             //Hit
-            if (this.state === states[3]) {
+            if (this.isState(3)) {
                 this.state = states[4]
                 //Mark diag neighbours as miss because there cant be ship
                 for (var n of this.neighbours) {
-                    if (n.state === states[0] && isDiagNeighbour(this, n)) {
+                    if (n.isState(0) && isDiagNeighbour(this, n)) {
                         n.state = states[1]
                     }
                 }
@@ -48,6 +48,10 @@ class Block {
             stroke(0);
             rect(x, y, BOXSIZE, BOXSIZE)
             noStroke()
+        }
+        this.isState = (s) => {
+            if(s === undefined || s === null) return false
+            return this.state === states[s]
         }
     }
 }
@@ -66,7 +70,7 @@ function drawO(x, y) {
 }
 function drawX(x, y) {
     strokeWeight(4)
-    stroke(255, 0, 0)
+    stroke(133, 44, 44)
     line(x + 5, y + 5, x + BOXSIZE - 5, y + BOXSIZE - 5)
     line(x + BOXSIZE - 5, y + 5, x + 5, y + BOXSIZE - 5)
     noStroke()
@@ -74,7 +78,7 @@ function drawX(x, y) {
 function drawS(x, y) {
     strokeWeight(3)
     stroke(0)
-    fill(200)
+    fill(50)
     rect(x, y, BOXSIZE, BOXSIZE)
     noFill()
     noStroke()
