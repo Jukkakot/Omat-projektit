@@ -50,24 +50,27 @@ class Block {
             noStroke()
         }
         this.isState = (s) => {
-            if(s === undefined || s === null) return false
+            if (s === undefined || s === null) return false
             return this.state === states[s]
         }
     }
 }
+//Default box
 function drawDef(x, y) {
-    //Default box
+
     strokeWeight(2)
     stroke(0)
     rect(x, y, BOXSIZE, BOXSIZE)
     noStroke()
 }
+//Miss
 function drawO(x, y) {
     strokeWeight(4)
     stroke(0, 0, 255)
     circle(x + BOXSIZE / 2, y + BOXSIZE / 2, BOXSIZE / 2)
     noStroke()
 }
+//Hit
 function drawX(x, y) {
     strokeWeight(4)
     stroke(133, 44, 44)
@@ -75,6 +78,7 @@ function drawX(x, y) {
     line(x + BOXSIZE - 5, y + 5, x + 5, y + BOXSIZE - 5)
     noStroke()
 }
+//Ship
 function drawS(x, y) {
     strokeWeight(3)
     stroke(0)
