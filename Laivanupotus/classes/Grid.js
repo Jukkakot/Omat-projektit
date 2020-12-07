@@ -250,8 +250,9 @@ function giveNeighbours(x, y, blocks) {
   if (y + 1 <= 9 && x + 1 <= 9) {
     neighbours.push(blocks[y + 1][x + 1])
   }
-
+  
   return shuffle(neighbours)
+ 
 }
 
 

@@ -57,7 +57,7 @@ class Block {
 }
 function drawDef(x, y) {
     //Default box
-    strokeWeight(1)
+    strokeWeight(2)
     stroke(0)
     rect(x, y, BOXSIZE, BOXSIZE)
     noStroke()

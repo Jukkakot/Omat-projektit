@@ -1,4 +1,4 @@
-var BOXSIZE = 40
+const BOXSIZE = 40
 const states = ["", "miss", "hit", "ship", "hit ship"]
 let stats = [0, 0]
 let avgRounds = []
@@ -10,10 +10,11 @@ var mX, mY
 var shipArr = []
 var shipsToAddP, shipsToAddO
 var infiniteLoop
-var showShips = false
-var autoplay = false
-var smartReturnComputer
-var smartReturnPlayer
+var showShips = autoplay = false
+
+var smartReturnComputer,smartReturnPlayer
+let showB,autoButton,randomShips,restartB
+
 function start() {
   console.log("Starting..")
   if(rounds !== undefined &&  rounds !== 0 && rounds > 0){
@@ -31,16 +32,27 @@ function start() {
   grid2.addRandomShips(shipsToAddO)
   smartReturnPlayer = smartReturnComputer = undefined
 }
+function windowResized() {
+  //resizeCanvas(windowWidth, windowHeight);
+  randomShips.position(cnv.position().x, cnv.position().y+BOXSIZE * 10)
+  autoButton.position(cnv.position().x+BOXSIZE * 10, cnv.position().y+BOXSIZE * 1.1)
+  showB.position(cnv.position().x+BOXSIZE * 12, cnv.position().y+BOXSIZE * 10)
+  restartB.position(cnv.position().x+BOXSIZE * 10, cnv.position().y)
+}
 function setup() {
   cnv = createCanvas(BOXSIZE * 22, BOXSIZE * 20)
+  //cnv.position(windowWidth/2,0)
   cnv.mouseWheel(autoGame)
   //background(220);
-  const showB = createButton("Show ships")
-  const restartB = createButton("Restart")
-  const randomShips = createButton("Add random ships")
-  const autoButton = createButton("Toggle autoplay")
-
-  autoButton.position(BOXSIZE * 10, BOXSIZE * 1.1)
+  showB = createButton("Show ships")
+  restartB = createButton("Restart")
+  randomShips = createButton("Add random ships")
+  autoButton = createButton("Toggle autoplay")
+  randomShips.position(cnv.position().x, cnv.position().y+BOXSIZE * 10)
+  autoButton.position(cnv.position().x+BOXSIZE * 10, cnv.position().y+BOXSIZE * 1.1)
+  showB.position(cnv.position().x+BOXSIZE * 12, cnv.position().y+BOXSIZE * 10)
+  restartB.position(cnv.position().x+BOXSIZE * 10, cnv.position().y)
+  
   autoButton.mousePressed(() => {
     autoplay = !autoplay
     if(shipsToAddP !== 0){
@@ -52,12 +64,12 @@ function setup() {
   autoButton.size(BOXSIZE * 2, BOXSIZE)
   autoButton.style('background-color', color(25, 23, 200, 50))
 
-  randomShips.position(0, BOXSIZE * 10)
+  
   randomShips.mousePressed(() => { grid1.addRandomShips(shipsToAddP) })
   randomShips.size(BOXSIZE * 10, BOXSIZE)
   randomShips.style('background-color', color(25, 23, 200, 50))
 
-  restartB.position(BOXSIZE * 10, 0)
+  
   restartB.mousePressed(() => {
     start()
     loop()
@@ -65,7 +77,7 @@ function setup() {
   restartB.size(BOXSIZE * 2, BOXSIZE)
   restartB.style('background-color', color(25, 23, 200, 50))
 
-  showB.position(BOXSIZE * 12, BOXSIZE * 10)
+  
   showB.mousePressed(() => { showShips = !showShips })
   showB.size(BOXSIZE * 10, BOXSIZE)
   showB.style('background-color', color(25, 23, 200, 50))
@@ -96,9 +108,11 @@ function mouseClicked(e) {
 }
 
 function draw() {
+  if(frameCount === 1) windowResized()
+  
   const sum = avgRounds.reduce((a, b) => a + b, 0);
   const avg = Math.floor((sum / avgRounds.length)) || 0;  
-  background(100);
+  background(80);
   mX = Math.floor(mouseX / BOXSIZE)
   mY = Math.floor(mouseY / BOXSIZE)
   grid1.draw(true)
@@ -109,7 +123,7 @@ function draw() {
   }
   drawText("Stats:", BOXSIZE * 11, BOXSIZE * 4, BOXSIZE * 0.6)
   
-  drawText(stats[1] + " / " + stats[0], BOXSIZE * 11, BOXSIZE * 5, BOXSIZE * 0.6)
+  drawText(stats[1] + " / " + stats[0], BOXSIZE * 11, BOXSIZE * 5, BOXSIZE * 0.4)
   //drawText(opponentWinCount + " / " + playerWinCount, BOXSIZE * 11, BOXSIZE * 5, BOXSIZE * 0.6)
   drawText("avg rounds:", BOXSIZE * 11, BOXSIZE * 6, BOXSIZE * 0.3)
   drawText(avg, BOXSIZE * 11, BOXSIZE * 7, BOXSIZE * 0.6)
@@ -159,7 +173,7 @@ function drawShips() {
     for (var i = Math.min(...shipsToAddP); i < Math.max(...shipsToAddP) + 1; i++) {
       drawShip(0, BOXSIZE * 10 + i * (BOXSIZE + BOXSIZE / 4), i, [...shipsToAddP])
     }
-  } else {
+  } else if (!autoplay){
     drawText("Player can start firing!", BOXSIZE * 5, BOXSIZE * 11.5, BOXSIZE)
   }
   
