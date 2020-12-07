@@ -66,42 +66,46 @@ class Grid {
       if (args === undefined) return [giveRandBlock(this.blocks), []]
 
       const currBlock = args[0]
-      const prevBlocks = args[1]
+      const hitBlocks = args[1]
 
       currBlock.click()
-      prevBlocks.push(currBlock)
+      if (currBlock.isState(4)) hitBlocks.push(currBlock)
 
-      for (var block of prevBlocks) {
-        if (!block.isState(4)) continue
-        for (var nei of block.neighbours) {
-          if (nei.isState(0) || nei.isState(3)) return [nei, prevBlocks]
+      if (hitBlocks.length > 0) {
+        for (var block of hitBlocks) {
+          for (var nei of block.neighbours) {
+            if (nei.isState(0) || nei.isState(3)) return [nei, hitBlocks]
+          }
         }
       }
-      return [giveRandBlock(this.blocks), prevBlocks]
+      return [giveRandBlock(this.blocks), []]
     }
   }
 }
 
 function giveRandBlock(blocks) {
   var loopCount = 0
-  while (loopCount++ < 200) {
+  while (loopCount++ < 400) {
     var rX = Math.floor(random(0, 10))
     var rY = Math.floor(random(0, 10))
-    if (!isEven(rX) && !isEven(rY)) continue
-    if (isEven(rX) && isEven(rY)) continue
-    if (rX === rY) continue
+    if (loopCount < 200) {
+      if (!isEven(rX) && !isEven(rY)) continue
+      if (isEven(rX) && isEven(rY)) continue
+      if (rX === rY) continue
+    }
     const block = blocks[rY][rX]
     if (block !== undefined && (block.isState(0) || block.isState(3))) return block
   }
 
-  console.log("Could not find random block in 200 tries")
-  //If while loop looped over 100 times, use for loop to just find next empty block
+  console.log("Could not find random empty block in 400 tries")
+  
+  //If looped over 400 times, just find next empty block
   for (var row of blocks) {
     for (var block of row) {
       if (block.isState(0) || block.isState(3)) return block
     }
   }
-  //Return false if couldn't find available block (Should never be the case though)
+  //Couldn't find available block (Should never be the case though)
   return false
 }
 

@@ -21,7 +21,7 @@ function start() {
     avgRounds.push(rounds)
   }
   rounds = 0
-  shipsToAddP = [2, 3, 3, 4, 5]
+  shipsToAddP = [2,3,3,4,5]
   shipsToAddO = [...shipsToAddP]
   infiniteLoop = false
   grid1 = new Grid(0, 0)
