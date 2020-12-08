@@ -33,20 +33,35 @@ function start() {
   smartReturnPlayer = smartReturnComputer = undefined
 }
 function windowResized() {
-  BOXSIZE = windowWidth/25
+  const size = windowWidth/25
+  if(size <= 40){
+    BOXSIZE = size
+  }
+  
+  
   cnv = createCanvas(BOXSIZE * 22, BOXSIZE * 20)
   cnv.mouseWheel(autoGame)
   randomShips.position(cnv.position().x, cnv.position().y + BOXSIZE * 10)
   autoButton.position(cnv.position().x + BOXSIZE * 10, cnv.position().y + BOXSIZE * 1.1)
   showB.position(cnv.position().x + BOXSIZE * 12, cnv.position().y + BOXSIZE * 10)
   restartB.position(cnv.position().x + BOXSIZE * 10, cnv.position().y)
+
   autoButton.size(BOXSIZE * 2, BOXSIZE)
   randomShips.size(BOXSIZE * 10, BOXSIZE)
   restartB.size(BOXSIZE * 2, BOXSIZE)
   showB.size(BOXSIZE * 10, BOXSIZE)
+
+  autoButton.style('font-size',BOXSIZE/3+"px")
+  randomShips.style('font-size',BOXSIZE/3+"px")
+  restartB.style('font-size',BOXSIZE/3+"px")
+  showB.style('font-size',BOXSIZE/3+"px")
+  
 }
 function setup() {
-  BOXSIZE = windowWidth/25
+  const size = windowWidth/25
+  if(size <= 40){
+    BOXSIZE = size
+  }
   cnv = createCanvas(BOXSIZE * 22, BOXSIZE * 20)
   cnv.mouseWheel(autoGame)
   
@@ -54,12 +69,17 @@ function setup() {
   restartB = createButton("Restart")
   randomShips = createButton("Add random ships")
   autoButton = createButton("Toggle autoplay")
-
+  
   randomShips.position(cnv.position().x, cnv.position().y + BOXSIZE * 10)
   autoButton.position(cnv.position().x + BOXSIZE * 10, cnv.position().y + BOXSIZE * 1.1)
   showB.position(cnv.position().x + BOXSIZE * 12, cnv.position().y + BOXSIZE * 10)
   restartB.position(cnv.position().x + BOXSIZE * 10, cnv.position().y)
 
+  autoButton.style('font-size',BOXSIZE/3+"px")
+  randomShips.style('font-size',BOXSIZE/3+"px")
+  restartB.style('font-size',BOXSIZE/3+"px")
+  showB.style('font-size',BOXSIZE/3+"px")
+  
   autoButton.mousePressed(() => {
     autoplay = !autoplay
     if (shipsToAddP !== 0) {
@@ -72,6 +92,7 @@ function setup() {
   randomShips.size(BOXSIZE * 10, BOXSIZE)
   restartB.size(BOXSIZE * 2, BOXSIZE)
   showB.size(BOXSIZE * 10, BOXSIZE)
+  
   autoButton.style('background-color', color(25, 23, 200, 50))
 
   randomShips.mousePressed(() => { grid1.addRandomShips(shipsToAddP) })
