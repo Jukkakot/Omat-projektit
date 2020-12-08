@@ -6,6 +6,7 @@ var H = 8
 let cnv
 var grid
 var mX, mY
+//scaling?
 function scale() {
   
 }
