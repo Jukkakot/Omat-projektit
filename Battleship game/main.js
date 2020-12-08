@@ -37,6 +37,8 @@ function windowResized() {
   if(size <= 40){
     BOXSIZE = size
   }
+  
+  
   cnv = createCanvas(BOXSIZE * 22, BOXSIZE * 20)
   cnv.mouseWheel(autoGame)
   
@@ -78,7 +80,7 @@ function setup() {
   randomShips.style('font-size',BOXSIZE/3+"px")
   restartB.style('font-size',BOXSIZE/3+"px")
   showB.style('font-size',BOXSIZE/3+"px")
-
+  
   autoButton.mousePressed(() => {
     autoplay = !autoplay
     if (shipsToAddP !== 0) {
