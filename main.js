@@ -1,4 +1,4 @@
-const BOXSIZE = 40
+var BOXSIZE = 40
 const states = ["", "miss", "hit", "ship", "hit ship"]
 let stats = [0, 0]
 let avgRounds = []
@@ -33,15 +33,23 @@ function start() {
   smartReturnPlayer = smartReturnComputer = undefined
 }
 function windowResized() {
+  BOXSIZE = windowWidth/25
+  cnv = createCanvas(BOXSIZE * 22, BOXSIZE * 20)
+  cnv.mouseWheel(autoGame)
   randomShips.position(cnv.position().x, cnv.position().y + BOXSIZE * 10)
   autoButton.position(cnv.position().x + BOXSIZE * 10, cnv.position().y + BOXSIZE * 1.1)
   showB.position(cnv.position().x + BOXSIZE * 12, cnv.position().y + BOXSIZE * 10)
   restartB.position(cnv.position().x + BOXSIZE * 10, cnv.position().y)
+  autoButton.size(BOXSIZE * 2, BOXSIZE)
+  randomShips.size(BOXSIZE * 10, BOXSIZE)
+  restartB.size(BOXSIZE * 2, BOXSIZE)
+  showB.size(BOXSIZE * 10, BOXSIZE)
 }
 function setup() {
+  BOXSIZE = windowWidth/25
   cnv = createCanvas(BOXSIZE * 22, BOXSIZE * 20)
   cnv.mouseWheel(autoGame)
-
+  
   showB = createButton("Show ships")
   restartB = createButton("Restart")
   randomShips = createButton("Add random ships")
@@ -61,21 +69,24 @@ function setup() {
     loop()
   })
   autoButton.size(BOXSIZE * 2, BOXSIZE)
+  randomShips.size(BOXSIZE * 10, BOXSIZE)
+  restartB.size(BOXSIZE * 2, BOXSIZE)
+  showB.size(BOXSIZE * 10, BOXSIZE)
   autoButton.style('background-color', color(25, 23, 200, 50))
 
   randomShips.mousePressed(() => { grid1.addRandomShips(shipsToAddP) })
-  randomShips.size(BOXSIZE * 10, BOXSIZE)
+  
   randomShips.style('background-color', color(25, 23, 200, 50))
 
   restartB.mousePressed(() => {
     start()
     loop()
   })
-  restartB.size(BOXSIZE * 2, BOXSIZE)
+  
   restartB.style('background-color', color(25, 23, 200, 50))
 
   showB.mousePressed(() => { showShips = !showShips })
-  showB.size(BOXSIZE * 10, BOXSIZE)
+  
   showB.style('background-color', color(25, 23, 200, 50))
   start()
 }
@@ -127,11 +138,11 @@ function draw() {
   drawText(avg, BOXSIZE * 11, BOXSIZE * 7, BOXSIZE * 0.6)
 
   if (wasInGrid1()) {
-    drawText(mX % 12 + "," + mY, width / 2, height - BOXSIZE, BOXSIZE * 2)
+    drawText(mX % 12 + "," + mY, width / 2, BOXSIZE*9, BOXSIZE)
     grid1.hover()
   }
   if (wasInGrid2()) {
-    drawText(mX % 12 + "," + mY, width / 2, height - BOXSIZE, BOXSIZE * 2)
+    drawText(mX % 12 + "," + mY, width / 2, BOXSIZE*9, BOXSIZE)
     grid2.hover()
   }
 
