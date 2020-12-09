@@ -8,7 +8,7 @@ const difficulties = [
   [16,16,40],
   [24,24,99]
 ]
-var difficulty = 2
+var difficulty = 0
 var W = difficulties[difficulty][0]
 var H = difficulties[difficulty][1]
 var mineCount = difficulties[difficulty][2]
@@ -18,17 +18,19 @@ var mX, mY
 var wasRightClick = false
 var restartB
 var showMines = false
+var firstClick
 function scaling() {
   // size >= defaultBoxSize ? BOXSIZE = defaultBoxSize : BOXSIZE = size
   windowWidth <= defaultCanvasSize ? BOXSIZE = windowWidth/W : BOXSIZE = defaultCanvasSize / W
   // cnv = createCanvas(defaultCanvasSize, defaultCanvasSize + BOXSIZE*0.4*H*0.4)
   cnv = createCanvas(BOXSIZE * W, (BOXSIZE * H) + BOXSIZE*0.4*H*0.4)
   document.getElementById("defaultCanvas0").oncontextmenu = function () { return false; }
-  restartB.style('background-color', color(25, 23, 200, 50))
-  showB.style('background-color', color(25, 23, 200, 50))
-  easyB.style('background-color', color(25, 23, 200, 50))
-  mediumB.style('background-color', color(25, 23, 200, 50))
-  hardB.style('background-color', color(25, 23, 200, 50))
+  restartB.style('background-color', color(150, 150, 150))
+  showB.style('background-color', color(150, 150, 150))
+
+  easyB.style('background-color', color(0, 250, 0, 50))
+  mediumB.style('background-color', color(0, 0, 250, 50))
+  hardB.style('background-color', color(250, 0, 0, 50))
 
   showB.position(cnv.position().x + BOXSIZE*W* 0.220, cnv.position().y + BOXSIZE * H + BOXSIZE*0.4*H*0.1)
   showB.size(W * BOXSIZE *0.2, BOXSIZE*0.4*H*0.2)
@@ -80,6 +82,7 @@ function setup() {
 }
 function start() {
   console.log("Starting..")
+  firstClick = true
   W = difficulties[difficulty][0]
   H = difficulties[difficulty][1]
   mineCount = difficulties[difficulty][2]
@@ -101,7 +104,8 @@ function mouseClicked() {
   if (grid.gameWon()) return
   if (wasRightClick === RIGHT || grid.gameOver) return
   if (wasInGrid()) {
-    grid.click()
+    grid.click(firstClick)
+    if(firstClick) firstClick = false
   }
 }
 function draw() {
@@ -109,7 +113,7 @@ function draw() {
   background(80)
   mX = Math.floor(mouseX / BOXSIZE)
   mY = Math.floor(mouseY / BOXSIZE)
-  grid.draw(grid.gameOver || showMines)
+  grid.draw(grid.gameOver || showMines || grid.gameWon())
   // grid.draw(true)
   
   if (wasInGrid()) {
@@ -120,6 +124,9 @@ function draw() {
 
   if (grid.gameWon()) {
     drawText('Player won!', width / 2, height / 4, BOXSIZE)
+  }
+  if (grid.gameOver) {
+    drawText('Game over!', width / 2, height / 4, BOXSIZE)
   }
 }
 function drawText(txt, x, y, size) {

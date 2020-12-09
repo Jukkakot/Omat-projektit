@@ -3,33 +3,44 @@ class Grid {
     this.blocks = createBlocks()
     this.gameOver = false
     this.gameWon = () => {
-      
+
       for (var row of this.blocks) {
         for (var block of row) {
-          if(block.isState(0)) return false
-          if(block.isMine && !block.isFlag) return false
-          if(!block.isMine && block.isFlag) return false
+          if (block.isState(0)) return false
+          if (block.isMine && !block.isFlag) return false
+          if (!block.isMine && block.isFlag) return false
         }
       }
       return true
     }
-    this.click = () => {
-      this.gameOver = !this.getBlock(mX, mY).click()
+    this.click = (firstClick) => {
+      const block = this.getBlock(mX, mY)
+      if (firstClick && block.isMine) {
+        block.isMine = false
+        block.state = states[0]
+        for (var n of block.neighbours) {
+          if (n.value === 0) continue
+          n.value--
+        }
+        this.randomMines(1)
+      }
+      this.gameOver = !block.click()
       return this.gameOver
     }
     this.rightClick = () => {
-      if(wasInGrid()){
+      if (wasInGrid()) {
         this.getBlock(mX, mY).rightClick()
       }
     }
     this.randomMines = (num) => {
       var mCount = num
       while (mCount > 0) {
-        mCount--
+        
         const rX = Math.floor(random(0, W))
         const rY = Math.floor(random(0, H))
         var block = this.getBlock(rX, rY)
-        if (block === undefined) continue
+        if (block === undefined || block.isMine) continue
+        mCount--
         block.isMine = true
         block.state = states[2]
         for (var n of block.neighbours) {

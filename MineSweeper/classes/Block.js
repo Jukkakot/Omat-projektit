@@ -20,6 +20,11 @@ class Block {
             const x = this.x * BOXSIZE
             const y = this.y * BOXSIZE
             drawDef(x, y)
+            if (this.isFlag && this.isMine && drawMines) {
+                drawMine(x,y)
+                drawFlag(x, y)
+                return
+            }
             if (this.isFlag) {
                 drawFlag(x, y)
                 return
@@ -86,12 +91,13 @@ function drawOpenMine(x, y) {
     rect(x, y, BOXSIZE, BOXSIZE)
     noFill()
     noStroke()
+
     drawMine(x,y)
 }
 function drawMine(x, y) {
-    strokeWeight(4)
-    stroke(0)
-    fill(0)
+    
+    noStroke()
+    fill(40)
     circle(x + BOXSIZE / 2, y + BOXSIZE / 2, BOXSIZE / 2)
     noFill()
     noStroke()
