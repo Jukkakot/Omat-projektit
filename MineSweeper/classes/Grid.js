@@ -4,6 +4,10 @@ class Grid {
     this.click = () => {
       return this.getBlock(mX, mY).click()
     }
+    this.rightClick = () => {
+      var block = this.getBlock(mX, mY)
+      block.isFlag = !block.isFlag
+    }
     this.randomMines = (mCount) => {
       for (var row of this.blocks) {
         for (var block of row) {

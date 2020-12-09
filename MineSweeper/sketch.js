@@ -1,51 +1,56 @@
 const defaultBoxSize = 80
 var BOXSIZE = defaultBoxSize
-const states = ["hidden", "open","hiddenMine","openMine"]
+//                0         1         2           3         4
+const states = ["hidden", "open","hiddenMine","openMine","flag"]
 var W = 10
 var H = 8
 let cnv
 var grid
 var mX, mY
-//scaling?
-function scale() {
-  
+var wasRightClick = false
+
+function scaling() {
+  const size = windowWidth / (W)
+  size >= defaultBoxSize ?  BOXSIZE = defaultBoxSize : BOXSIZE = size 
+  cnv = createCanvas(BOXSIZE * W, (BOXSIZE * H)+BOXSIZE)
+  document.getElementById("defaultCanvas0").
+  oncontextmenu = function() { return false; } 
 }
 function setup() {
-  const size = windowWidth / (W + 0.5)
-  size >= defaultBoxSize ? BOXSIZE = size : BOXSIZE = 80
-  cnv = createCanvas(BOXSIZE * W, (BOXSIZE * H)+BOXSIZE)
-
+  scaling()
   start()
 }
 function start() {
   console.log("Starting..")
   grid = new Grid(W, H)
-  grid.randomMines(0.1)
+  grid.randomMines(0.2)
 }
 function windowResized() {
-  const size = windowWidth / (W + 0.5)
-  size >= defaultBoxSize ? BOXSIZE = 80 : BOXSIZE = size
-  cnv = createCanvas(BOXSIZE * W, (BOXSIZE * H)+BOXSIZE)
+  scaling()
 }
-function mouseClicked(e) {
+
+function mousePressed() {
+  if (mouseButton === RIGHT) {
+    grid.rightClick()
+  }
+}
+function mouseClicked() {
+  if(wasRightClick === RIGHT) return
   if (wasInGrid()) {
     grid.click()
   }
 }
-
 function draw() {
-  if (frameCount === 1) windowResized()
+  if (frameCount === 1) scaling()
   background(80)
   mX = Math.floor(mouseX / BOXSIZE)
   mY = Math.floor(mouseY / BOXSIZE)
   grid.draw()
+
+  drawText(mX + "," + mY, width/2, height-BOXSIZE/2)
   if (wasInGrid()) {
-    drawText(mX + "," + mY, width/2, height-BOXSIZE/2)
     grid.hover()
- 
   }
-  
-  
 }
 function drawText(txt,x, y) {
   textAlign(CENTER, CENTER);
