@@ -21,9 +21,12 @@ var showMines = false
 var firstClick
 function scaling() {
   // size >= defaultBoxSize ? BOXSIZE = defaultBoxSize : BOXSIZE = size
-  windowWidth <= defaultCanvasSize ? BOXSIZE = windowWidth/W : BOXSIZE = defaultCanvasSize / W
+  // 
+  Math.min(windowWidth,windowHeight) < defaultCanvasSize ? 
+  BOXSIZE = Math.min(windowWidth,windowHeight)/W : 
+  BOXSIZE = defaultCanvasSize / W
   // cnv = createCanvas(defaultCanvasSize, defaultCanvasSize + BOXSIZE*0.4*H*0.4)
-  cnv = createCanvas(BOXSIZE * W, (BOXSIZE * H) + BOXSIZE*0.4*H*0.4)
+  cnv = createCanvas(BOXSIZE * W, (BOXSIZE * H) + BOXSIZE*0.15*H)
   document.getElementById("defaultCanvas0").oncontextmenu = function () { return false; }
   restartB.style('background-color', color(150, 150, 150))
   showB.style('background-color', color(150, 150, 150))
@@ -44,7 +47,7 @@ function scaling() {
   restartB.style('font-size', BOXSIZE*0.4*H*0.2 *0.3 + "px")
   restartB.mousePressed(start)
 
-  easyB.position(cnv.position().x + BOXSIZE * W*0.6, cnv.position().y + BOXSIZE * H + BOXSIZE*0.4*H*0.1)
+  easyB.position(cnv.position().x + BOXSIZE * W*0.58, cnv.position().y + BOXSIZE * H + BOXSIZE*0.4*H*0.1)
   easyB.size(W * 0.1* BOXSIZE, BOXSIZE*0.4*H*0.2)
   easyB.style('font-size', BOXSIZE*0.4*H*0.2 *0.3 + "px")
   easyB.mousePressed(() => {
@@ -53,7 +56,7 @@ function scaling() {
     start()
   })
 
-  mediumB.position(cnv.position().x + BOXSIZE * W*0.75, cnv.position().y + BOXSIZE * H + BOXSIZE*0.4*H*0.1)
+  mediumB.position(cnv.position().x + BOXSIZE * W*0.71, cnv.position().y + BOXSIZE * H + BOXSIZE*0.4*H*0.1)
   mediumB.size(W * 0.1*BOXSIZE, BOXSIZE*0.4*H*0.2)
   mediumB.style('font-size', BOXSIZE*0.4*H*0.2 *0.3 + "px")
   mediumB.mousePressed(() => {
@@ -62,7 +65,7 @@ function scaling() {
     start()
   })
 
-  hardB.position(cnv.position().x + BOXSIZE * W*0.90, cnv.position().y + BOXSIZE * H + BOXSIZE*0.4*H*0.1)
+  hardB.position(cnv.position().x + BOXSIZE * W*0.84, cnv.position().y + BOXSIZE * H + BOXSIZE*0.4*H*0.1)
   hardB.size(W * 0.1*BOXSIZE, BOXSIZE*0.4*H*0.2)
   hardB.style('font-size', BOXSIZE*0.4*H*0.2 *0.3 + "px")
   hardB.mousePressed(() => {
