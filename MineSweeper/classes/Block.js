@@ -7,7 +7,15 @@ class Block {
         this.isMine = false
         this.neighbours = []
         this.isFlag = false
-        this.hover = () => hoverBox(this.x,this.y)
+        this.hover = () =>{
+            noFill()
+            strokeWeight(5)
+            stroke(0);
+            rect(this.x* BOXSIZE,this.y * BOXSIZE, BOXSIZE, BOXSIZE)
+            noStroke()}
+        this.rightClick = () => {
+            if(!this.isState(1)) this.isFlag = !this.isFlag
+        }
         this.draw = (drawMines) => {
             const x = this.x * BOXSIZE
             const y = this.y * BOXSIZE
@@ -21,14 +29,13 @@ class Block {
             } else if (this.isState(2) && drawMines) {
                 drawMine(x, y)
             } else if (this.isState(3)) {
-                drawOpen(x, y)
-                drawMine(x, y)
+                drawOpenMine(x,y)
             } else if (this.isState(4)) {
                 drawFlag(x, y)
             }
         }
         this.click = () => {
-            if (this.isFlag) return
+            if (this.isFlag) return true
             //Hidden
             if (this.isState(0) && this.value === 0) {
                 this.state = states[1]
@@ -39,7 +46,9 @@ class Block {
                 this.state = states[1]
             } else if (this.isState(2)) {
                 this.state = states[3]
-            }
+                return false
+            } 
+            return true
         }
         this.isState = (num) => {
             return this.state === states[num]
@@ -69,6 +78,15 @@ function drawOpen(x, y, value) {
     noFill()
     noStroke()
     if (value >= 1) drawValue(x, y, value)
+}
+function drawOpenMine(x, y) {
+    strokeWeight(2)
+    stroke(0)
+    fill(150,0,0)
+    rect(x, y, BOXSIZE, BOXSIZE)
+    noFill()
+    noStroke()
+    drawMine(x,y)
 }
 function drawMine(x, y) {
     strokeWeight(4)

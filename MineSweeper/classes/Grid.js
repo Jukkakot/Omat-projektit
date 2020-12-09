@@ -1,23 +1,39 @@
 class Grid {
   constructor() {
     this.blocks = createBlocks()
-    this.click = () => {
-      return this.getBlock(mX, mY).click()
-    }
-    this.rightClick = () => {
-      var block = this.getBlock(mX, mY)
-      block.isFlag = !block.isFlag
-    }
-    this.randomMines = (mCount) => {
+    this.gameOver = false
+    this.gameWon = () => {
+      
       for (var row of this.blocks) {
         for (var block of row) {
-          if (random() < mCount) {
-            block.isMine = true
-            block.state = states[2]
-            for(var n of block.neighbours){
-              n.value ++
-            }
-          }
+          if(block.isState(0)) return false
+          if(block.isMine && !block.isFlag) return false
+          if(!block.isMine && block.isFlag) return false
+        }
+      }
+      return true
+    }
+    this.click = () => {
+      this.gameOver = !this.getBlock(mX, mY).click()
+      return this.gameOver
+    }
+    this.rightClick = () => {
+      if(wasInGrid()){
+        this.getBlock(mX, mY).rightClick()
+      }
+    }
+    this.randomMines = (num) => {
+      var mCount = num
+      while (mCount > 0) {
+        mCount--
+        const rX = Math.floor(random(0, W))
+        const rY = Math.floor(random(0, H))
+        var block = this.getBlock(rX, rY)
+        if (block === undefined) continue
+        block.isMine = true
+        block.state = states[2]
+        for (var n of block.neighbours) {
+          n.value++
         }
       }
     }
@@ -30,16 +46,14 @@ class Grid {
     }
 
     this.hover = () => {
-      if(wasInGrid()){
+      if (wasInGrid()) {
         this.getBlock(mX, mY).hover()
       }
     }
 
     this.getBlock = (x, y) => {
-      if (wasInGrid()) {
+      if (x >= 0 && x < W && y >= 0 && y < H) {
         return this.blocks[y][x]
-      } else {
-        return false
       }
     }
   }
@@ -98,7 +112,7 @@ function giveNeighbours(x, y, blocks) {
   if (x + 1 < W) {
     neighbours.push(blocks[y][x + 1])
   }
- // console.log(x,y,neighbours)
+  // console.log(x,y,neighbours)
   return neighbours
 }
 function wasInGrid() {

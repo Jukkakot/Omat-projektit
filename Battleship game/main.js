@@ -81,7 +81,22 @@ function setup() {
   restartB.style('font-size',BOXSIZE/3+"px")
   showB.style('font-size',BOXSIZE/3+"px")
   
-  autoButton.mousePressed(() => {
+  autoButton.size(BOXSIZE * 2, BOXSIZE)
+  randomShips.size(BOXSIZE * 10, BOXSIZE)
+  restartB.size(BOXSIZE * 2, BOXSIZE)
+  showB.size(BOXSIZE * 10, BOXSIZE)
+  
+  autoButton.style('background-color', color(25, 23, 200, 50))
+  restartB.style('background-color', color(25, 23, 200, 50))
+  showB.style('background-color', color(25, 23, 200, 50))
+  randomShips.style('background-color', color(25, 23, 200, 50))
+  randomShips.mousePressed(() => { grid1.addRandomShips(shipsToAddP) })
+  showB.mousePressed(() => { showShips = !showShips })
+  restartB.mousePressed(() => {
+    start()
+    loop()
+  })
+ autoButton.mousePressed(() => {
     autoplay = !autoplay
     if (shipsToAddP !== 0) {
       grid1.addRandomShips(shipsToAddP)
@@ -89,27 +104,6 @@ function setup() {
     //start()
     loop()
   })
-  autoButton.size(BOXSIZE * 2, BOXSIZE)
-  randomShips.size(BOXSIZE * 10, BOXSIZE)
-  restartB.size(BOXSIZE * 2, BOXSIZE)
-  showB.size(BOXSIZE * 10, BOXSIZE)
-  
-  autoButton.style('background-color', color(25, 23, 200, 50))
-
-  randomShips.mousePressed(() => { grid1.addRandomShips(shipsToAddP) })
-  
-  randomShips.style('background-color', color(25, 23, 200, 50))
-
-  restartB.mousePressed(() => {
-    start()
-    loop()
-  })
-  
-  restartB.style('background-color', color(25, 23, 200, 50))
-
-  showB.mousePressed(() => { showShips = !showShips })
-  
-  showB.style('background-color', color(25, 23, 200, 50))
   start()
 }
 
