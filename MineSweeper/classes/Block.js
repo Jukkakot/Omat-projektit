@@ -7,21 +7,22 @@ class Block {
         this.isMine = false
         this.neighbours = []
         this.isFlag = false
-        this.hover = () =>{
+        this.hover = () => {
             noFill()
             strokeWeight(5)
             stroke(0);
-            rect(this.x* BOXSIZE,this.y * BOXSIZE, BOXSIZE, BOXSIZE)
-            noStroke()}
+            rect(this.x * BOXSIZE, this.y * BOXSIZE, BOXSIZE, BOXSIZE)
+            noStroke()
+        }
         this.rightClick = () => {
-            if(!this.isState(1)) this.isFlag = !this.isFlag
+            if (!this.isState(1)) this.isFlag = !this.isFlag
         }
         this.draw = (drawMines) => {
             const x = this.x * BOXSIZE
             const y = this.y * BOXSIZE
             drawDef(x, y)
             if (this.isFlag && this.isMine && drawMines) {
-                drawMine(x,y)
+                drawMine(x, y)
                 drawFlag(x, y)
                 return
             }
@@ -34,7 +35,7 @@ class Block {
             } else if (this.isState(2) && drawMines) {
                 drawMine(x, y)
             } else if (this.isState(3)) {
-                drawOpenMine(x,y)
+                drawOpenMine(x, y)
             } else if (this.isState(4)) {
                 drawFlag(x, y)
             }
@@ -52,7 +53,7 @@ class Block {
             } else if (this.isState(2)) {
                 this.state = states[3]
                 return false
-            } 
+            }
             return true
         }
         this.isState = (num) => {
@@ -87,15 +88,15 @@ function drawOpen(x, y, value) {
 function drawOpenMine(x, y) {
     strokeWeight(2)
     stroke(0)
-    fill(150,0,0)
+    fill(150, 0, 0)
     rect(x, y, BOXSIZE, BOXSIZE)
     noFill()
     noStroke()
 
-    drawMine(x,y)
+    drawMine(x, y)
 }
 function drawMine(x, y) {
-    
+
     noStroke()
     fill(40)
     circle(x + BOXSIZE / 2, y + BOXSIZE / 2, BOXSIZE / 2)
@@ -104,31 +105,31 @@ function drawMine(x, y) {
 }
 function drawValue(x, y, value) {
     // textAlign(CENTER, CENTER);
-    
-    switch(value){
-        case(1):
+
+    switch (value) {
+        case (1):
             fill(0, 0, 240)
             break
-        case(2):
+        case (2):
             fill(0, 150, 0)
             break
-        case(3):
+        case (3):
             fill(170, 0, 0)
             break
-        case(4):
+        case (4):
             fill(0, 0, 100)
             break
-        case(5):
+        case (5):
             fill(100, 0, 0)
             break
-        case(6):
+        case (6):
             fill(0, 150, 150)
             break
-        case(7):
-            fill(0,0,0)
+        case (7):
+            fill(0, 0, 0)
             break
-        case(8):
-            fill(150,150,150)
+        case (8):
+            fill(150, 150, 150)
             break
     }
     noStroke()
@@ -136,11 +137,11 @@ function drawValue(x, y, value) {
     text(value, x + BOXSIZE / 2, y + BOXSIZE / 2);
     noFill()
 }
-function hoverBox(x,y) {
+function hoverBox(x, y) {
     noFill()
     strokeWeight(5)
     stroke(0);
-    rect(x* BOXSIZE,y * BOXSIZE, BOXSIZE, BOXSIZE)
+    rect(x * BOXSIZE, y * BOXSIZE, BOXSIZE, BOXSIZE)
     noStroke()
 }
 function drawFlag(x, y) {
